@@ -4,13 +4,14 @@ import EventLogistics from "../../components/event-detail/event-logistics";
 import EventSummery from "../../components/event-detail/event-summary";
 import EventContent from "../../components/event-detail/event-content";
 import ErrorAlert from "../../components/ui/error-alert";
+import { getFeaturedEvents } from "../../dummy-data";
 
 export default function EventDetailPage({ event }) {
   if (!event) {
     return (
-      <ErrorAlert>
-        <p>No event found</p>
-      </ErrorAlert>
+      <div className="center">
+        <p>loading...</p>
+      </div>
     );
   }
   return (
@@ -41,10 +42,13 @@ export async function getStaticProps(context) {
 }
 //pregenerate all events page
 export async function getStaticPaths() {
-  const events = await getAllEvents();
+  //load only featured events, for some events page is not pregenerated
+  const events = await getFeaturedEvents();
+
   const paths = events.map((e) => ({ params: { eventId: e.id } }));
   return {
     paths,
-    fallback: false, //true -> get events on the fly/ blocking -> wait for event feching
+    fallback: true, //true -> get events on the fly/ blocking -> wait for event feching
+    revalidate: 30, //regenerate every 30seconds
   };
 }

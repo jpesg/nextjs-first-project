@@ -17,6 +17,7 @@ export async function getStaticProps() {
     props: {
       events: featuredEvents,
     },
+    revalidate: 1800, // regenerate page every xxx time
   };
 }
 export default HomePage;
