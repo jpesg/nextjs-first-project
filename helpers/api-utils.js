@@ -1,8 +1,7 @@
 export const url =
   "https://next-js-course-c81cc-default-rtfb.firebaseio.com/events.json";
-export async function getAllEvents() {
-  const response = await fetch(url);
-  const data = await response.json();
+
+export const mapEvents = (data) => {
   const events = [];
   for (const key in data) {
     events.push({
@@ -10,8 +9,13 @@ export async function getAllEvents() {
       ...data[key],
     });
   }
-
   return events;
+};
+export async function getAllEvents() {
+  const response = await fetch(url);
+  const data = await response.json();
+
+  return mapEvents(data);
 }
 export async function getFeaturedEvents() {
   const allEvents = await getAllEvents();
@@ -25,12 +29,15 @@ export async function getEventById(id) {
 
 export async function getFilteredEvents(dateFilter) {
   const allEvents = await getAllEvents();
-  const { year, month } = dateFilter;
+  return filterEventsByDate(allEvents, dateFilter);
+}
 
-  return allEvents.filter((event) => {
+export const filterEventsByDate = (events, dateFilter) => {
+  const { year, month } = dateFilter;
+  return events.filter((event) => {
     const eventDate = new Date(event.date);
     return (
       eventDate.getFullYear() === year && eventDate.getMonth() === month - 1
     );
   });
-}
+};
