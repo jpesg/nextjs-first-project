@@ -1,3 +1,4 @@
+//move envets to firebase - real time db
 const DUMMY_EVENTS = [
   {
     id: "e1",
