@@ -5,7 +5,7 @@ import EventSummery from "../../components/event-detail/event-summary";
 import EventContent from "../../components/event-detail/event-content";
 import ErrorAlert from "../../components/ui/error-alert";
 import { getFeaturedEvents } from "../../dummy-data";
-
+import Head from "next/head";
 export default function EventDetailPage({ event }) {
   if (!event) {
     return (
@@ -16,6 +16,10 @@ export default function EventDetailPage({ event }) {
   }
   return (
     <Fragment>
+      <Head>
+        <title>{event.title}</title>
+        <meta name="description" content={event.description} />
+      </Head>
       <EventSummery title={event.title} />
       <EventLogistics
         {...{
