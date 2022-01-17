@@ -20,7 +20,15 @@ function FilteredEventsPage(props) {
   const numYear = +year;
   const numMonth = +month;
   const { data, error } = useSWR(url);
-
+  const pageHeadData = (
+    <Head>
+      <title>Filtered Events</title>
+      <meta
+        name="description"
+        content={`All events for ${numMonth}/${numYear}`}
+      />
+    </Head>
+  );
   //check month less than 1 or greater than 12
   if (
     error ||
@@ -33,6 +41,7 @@ function FilteredEventsPage(props) {
   ) {
     return (
       <Fragment>
+        {pageHeadData}
         <ErrorAlert>
           <p>Invalid filter</p>
         </ErrorAlert>
@@ -45,7 +54,12 @@ function FilteredEventsPage(props) {
   }
 
   if (!data) {
-    return <p className="center">Loading...</p>;
+    return (
+      <Fragment>
+        {pageHeadData}
+        <p className="center">Loading...</p>
+      </Fragment>
+    );
   }
   const events = mapEvents(data);
   const filteredEvents = filterEventsByDate(events, {
@@ -55,13 +69,7 @@ function FilteredEventsPage(props) {
   if (!filteredEvents || filteredEvents.length === 0) {
     return (
       <Fragment>
-        <Head>
-          <title>Filtered Events</title>
-          <meta
-            name="description"
-            content={`All events for ${numMonth}/${numYear}`}
-          />
-        </Head>
+        {pageHeadData}
         <ErrorAlert>
           <p>No events found</p>
         </ErrorAlert>
@@ -76,13 +84,6 @@ function FilteredEventsPage(props) {
 
   return (
     <Fragment>
-      <Head>
-        <title>Filtered Events</title>
-        <meta
-          name="description"
-          content={`All events for ${numMonth}/${numYear}`}
-        />
-      </Head>
       <ResultsTitle date={date} />
       <EventList items={filteredEvents} />
     </Fragment>
