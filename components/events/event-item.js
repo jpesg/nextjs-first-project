@@ -12,12 +12,14 @@ const EventItem = ({ title, image, date, location, id }) => {
   });
 
   const _address = location.replace(", ", "\n");
-
-  return (
-    <li className={classes.item}>
-      <div className={classes.imageContainer}>
+  /*
+<div className={classes.imageContainer}>
         <Image src={`/${image}`} alt={image} layout="fill" objectFit="cover" />
       </div>
+*/
+  return (
+    <li className={classes.item}>
+      <Image src={`/${image}`} alt={image} width={250} height={160} />
 
       <div className={classes.content}>
         <div className={classes.summary}>
