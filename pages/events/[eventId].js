@@ -6,6 +6,7 @@ import EventContent from "../../components/event-detail/event-content";
 import ErrorAlert from "../../components/ui/error-alert";
 import { getFeaturedEvents } from "../../dummy-data";
 import Head from "next/head";
+import Comments from "../../components/input/comments";
 export default function EventDetailPage({ event }) {
   if (!event) {
     return (
@@ -32,6 +33,7 @@ export default function EventDetailPage({ event }) {
       <EventContent>
         <p>{event.description}</p>
       </EventContent>
+      <Comments eventId={event.id} />
     </Fragment>
   );
 }
