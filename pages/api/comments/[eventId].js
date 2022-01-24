@@ -1,12 +1,14 @@
 // Next.js API route support: https://nextjs.org/docs/api-routes/introduction
 //api --> /comments/eventId]
-import { MongoClient } from "mongodb";
+
+import {
+  connectDb,
+  getAllDocuments,
+  insertDocument,
+} from "../../../helpers/db-utils";
 export default async function handler(req, res) {
   const eventId = req.query.eventId;
-  const client = await MongoClient.connect(
-    "mongodb://root:somepass@localhost:37019/events"
-  );
-  const db = client.db();
+  const client = await connectDb();
 
   if (req.method === "POST") {
     //add server side validation
@@ -27,7 +29,7 @@ export default async function handler(req, res) {
       eventId,
     };
 
-    await db.collection("comments").insertOne(newComment);
+    await insertDocument(client, "comments", newComment);
     client.close();
     return res
       .status(201)
@@ -35,12 +37,17 @@ export default async function handler(req, res) {
   }
 
   //get
-  const comments = await db
-    .collection("commnets")
-    .find({ eventId })
-    .sort({ _id: -1 })
-    .toArray()
-    .map((c) => ({ ...c, id: c._id }));
+  try {
+    const comments = await getAllDocuments({
+      client,
+      collection: "comments",
+      filter: { eventId },
+      sort: { _id: -1 },
+    }).map((c) => ({ ...c, id: c._id }));
+    res.status(200).json({ comments });
+  } catch (e) {
+    res.status(500).json({ message: "Error getting comments" });
+  }
+
   client.close();
-  res.status(200).json({ comments });
 }
