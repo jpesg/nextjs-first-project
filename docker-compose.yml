@@ -1,0 +1,12 @@
+version: "3.1"
+services:
+  mongo:
+    image: "bitnami/mongodb:latest"
+    container_name: "nextjs-mongo"
+    restart: always
+    volumes:
+      - ./mongodb:/bitnami/mongodb
+    environment:
+      - MONGODB_ROOT_PASSWORD=somepass
+    ports:
+      - "37019:27017"
