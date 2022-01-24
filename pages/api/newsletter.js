@@ -10,10 +10,10 @@ export default async function handler(req, res) {
       userEmail,
     });
     const client = await MongoClient.connect(
-      "mongodb://root:somepass@localhost:37019/newsletter"
+      "mongodb://root:somepass@localhost:37019/events"
     );
     const db = client.db();
-    await db.collection("emails").insertOne({ email: userEmail });
+    await db.collection("newsletter").insertOne({ email: userEmail });
     client.close();
     return res.status(201).json({ message: "Signed up" });
   }

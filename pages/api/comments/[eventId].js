@@ -1,7 +1,12 @@
 // Next.js API route support: https://nextjs.org/docs/api-routes/introduction
-//api --> /comments/eventId
-export default function handler(req, res) {
+//api --> /comments/eventId]
+import { MongoClient } from "mongodb";
+export default async function handler(req, res) {
   const eventId = req.query.eventId;
+  const client = await MongoClient.connect(
+    "mongodb://root:somepass@localhost:37019/events"
+  );
+  const db = client.db();
 
   if (req.method === "POST") {
     //add server side validation
@@ -16,24 +21,26 @@ export default function handler(req, res) {
       return res.status(422).json({ message: "Invalid Input" });
     }
     const newComment = {
-      id: new Date().toISOString,
       email,
       name,
       text,
+      eventId,
     };
 
+    await db.collection("comments").insertOne(newComment);
+    client.close();
     return res
       .status(201)
       .json({ message: "added Comment", comment: newComment });
   }
 
   //get
-  const dummyData = [
-    {
-      id: "c1",
-      name: "C1",
-      text: "c1",
-    },
-  ];
-  res.status(200).json({ comments: dummyData });
+  const comments = await db
+    .collection("commnets")
+    .find({ eventId })
+    .sort({ _id: -1 })
+    .toArray()
+    .map((c) => ({ ...c, id: c._id }));
+  client.close();
+  res.status(200).json({ comments });
 }
